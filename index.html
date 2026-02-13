@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment Engine v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#20bfdf",
+              "accent": "#9333ea",
+              "charcoal": "#0f171a",
+              "surface": "rgba(26, 38, 41, 0.75)",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #0f171a;
+        margin: 0;
+        overflow: hidden; /* Prevent scroll on the main container */
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .data-gradient {
+        background: linear-gradient(135deg, #20bfdf 0%, #06b6d4 50%, #9333ea 100%);
+      }
+      .gauge-ring {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 30;
+      }
+      /* Custom Scrollbar for any overflow elements */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f171a; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155; 
+        border-radius: 4px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.29.2",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

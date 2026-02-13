@@ -1,0 +1,5 @@
+{
+  "name": "Apex Real-Time Dashboard",
+  "description": "A high-fidelity, real-time performance metrics dashboard featuring glassmorphism UI, animated data visualizations, and live analytic simulation.",
+  "requestFramePermissions": []
+}
