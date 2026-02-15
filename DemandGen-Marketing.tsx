@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart3, 
@@ -9,10 +11,9 @@ import {
   ShieldCheck, 
   Activity,
   ArrowUpRight,
-  MonitorPlay,
   Wifi,
-  WifiOff,
-  RefreshCw
+  RefreshCw,
+  Search
 } from 'lucide-react';
 
 // --- Types ---
@@ -33,16 +34,13 @@ type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting';
 const SparklineBar = ({ height, colorClass, delay }: { height: string; colorClass?: string; delay: number }) => (
   <motion.div
     initial={{ height: "0%" }}
-    animate={{ height }}
+    animate={{ height: ["0%", height] }}
     transition={{ duration: 0.5, delay }}
     className={`w-1 rounded-t-sm ${colorClass || 'bg-primary/40'}`}
   />
 );
 
 const Gauge = ({ percentage }: { percentage: number }) => {
-  // Calculate dash offset based on percentage (0-100 map to approx stroke-dashoffset)
-  // 100 dasharray. 30 offset is approx 70% filled visually in the design.
-  // We'll approximate: 100 - percentage
   const dashOffset = 100 - percentage;
   
   return (
@@ -59,8 +57,8 @@ const Gauge = ({ percentage }: { percentage: number }) => {
           strokeWidth="3"
           strokeDasharray="100"
           initial={{ strokeDashoffset: 100 }}
-          animate={{ strokeDashoffset: dashOffset }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          animate={{ strokeDashoffset: [100, dashOffset] }}
+          transition={{ duration: 1 }}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -85,24 +83,22 @@ export default function DemandGenMarketing() {
   const [socketStatus, setSocketStatus] = useState<ConnectionStatus>('connecting');
   const [lastPing, setLastPing] = useState<number>(0);
 
-  // Simulate WebSocket Connection Lifecycle
+  // Simulate Connection Lifecycle (Mock logic only)
   useEffect(() => {
-    // Initial connection simulation
     const connectTimer = setTimeout(() => {
       setSocketStatus('connected');
-    }, 2000); // 2s delay to simulate handshake
+    }, 2000); 
 
     return () => clearTimeout(connectTimer);
   }, []);
 
-  // Simulate Data Feed
+  // Simulate Data Feed with organic jitter
   useEffect(() => {
     if (socketStatus !== 'connected') return;
 
     let timeoutId: ReturnType<typeof setTimeout>;
 
     const updateMetrics = () => {
-      // Simulate fake latency spike occasionally
       const isLagSpike = Math.random() > 0.95;
       
       if (isLagSpike) {
@@ -113,18 +109,16 @@ export default function DemandGenMarketing() {
       }
 
       setMetrics(prev => ({
-        growthRoi: +(prev.growthRoi + (Math.random() - 0.4) * 0.8).toFixed(1), // Trend slightly upwards
-        totalLeads: Math.floor(prev.totalLeads + (Math.random() * 12)), // Bursty growth
+        growthRoi: +(prev.growthRoi + (Math.random() - 0.4) * 0.8).toFixed(1),
+        totalLeads: Math.floor(prev.totalLeads + (Math.random() * 12)),
         conversionLift: +(prev.conversionLift + (Math.random() - 0.5) * 0.3).toFixed(1),
         cplReduction: +(prev.cplReduction + (Math.random() - 0.5) * 0.15).toFixed(1),
         confidence: +(Math.min(99.9, Math.max(98.0, prev.confidence + (Math.random() - 0.5) * 0.1))).toFixed(1),
         deviation: 0.4 
       }));
       
-      setLastPing(Math.floor(Math.random() * 40) + 12); // Random ping 12-52ms
+      setLastPing(Math.floor(Math.random() * 40) + 12);
 
-      // Randomize next update time for organic "socket push" feel
-      // Sometimes fast bursts (200ms), sometimes slow (1500ms)
       const nextUpdate = Math.random() > 0.7 ? 200 : Math.random() * 1500 + 500;
       timeoutId = setTimeout(updateMetrics, nextUpdate);
     };
@@ -134,7 +128,6 @@ export default function DemandGenMarketing() {
     return () => clearTimeout(timeoutId);
   }, [socketStatus]);
 
-  // Status Indicator Logic
   const getStatusColor = () => {
     switch (socketStatus) {
       case 'connected': return 'text-[#0bda54]';
@@ -152,18 +145,16 @@ export default function DemandGenMarketing() {
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-[#0f171a] font-display text-white p-4">
-      
-      {/* Dashboard Container - Fixed 600x600 as per design */}
+    <div className="flex w-full h-full items-center justify-center bg-[#0f171a] p-4 font-display text-white">
+      {/* Root container strictly constrained for gallery grid compliance */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: "circOut" }}
-        className="w-[600px] h-[600px] bg-charcoal border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col relative"
+        animate={{ opacity: [0, 1], scale: [0.95, 1] }}
+        transition={{ duration: 0.6 }}
+        className="w-full aspect-square max-w-[600px] bg-charcoal border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col relative"
       >
-        
-        {/* Header */}
-        <header className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+        {/* Header Section */}
+        <header className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <Activity className="text-black w-4 h-4" strokeWidth={3} />
@@ -182,30 +173,34 @@ export default function DemandGenMarketing() {
               <span className="text-[8px] font-bold text-gray-500 uppercase tracking-tighter">
                 Engine Status
               </span>
-              <span className={`text-[10px] font-bold ${getStatusColor()} flex items-center gap-1 transition-colors duration-300`}>
+              <div className={`text-[10px] font-bold ${getStatusColor()} flex items-center gap-1 transition-colors duration-300`}>
                 <motion.span 
-                  animate={{ opacity: socketStatus === 'connected' ? [1, 0.4, 1] : 1 }}
-                  transition={{ duration: socketStatus === 'connected' ? 2 : 0, repeat: Infinity }}
+                  animate={{ opacity: socketStatus === 'connected' ? [1, 0.4] : [1, 1] }}
+                  transition={{ 
+                    duration: socketStatus === 'connected' ? 1 : 0, 
+                    repeat: Infinity,
+                    repeatType: "mirror" as const
+                  }}
                   className={`h-1.5 w-1.5 rounded-full ${socketStatus === 'connected' ? 'bg-[#0bda54]' : socketStatus === 'reconnecting' ? 'bg-amber-400' : 'bg-gray-400'}`} 
                 />
                 {getStatusText()}
-              </span>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* Main Grid Content */}
-        <div className="flex-1 p-4 grid grid-cols-2 grid-rows-[1fr_1fr_0.8fr] gap-3">
+        {/* Dynamic Metric Grid */}
+        <div className="flex-1 p-4 grid grid-cols-2 grid-rows-[1fr_1fr_0.8fr] gap-3 min-h-0">
           
-          {/* Card 1: Growth ROI */}
-          <div className="glass-card rounded-xl p-3 flex flex-col justify-between group hover:border-white/20 transition-colors duration-300">
+          {/* Growth ROI Card */}
+          <div className="glass-card rounded-xl p-3 flex flex-col justify-between group hover:border-white/20 transition-colors duration-300 relative z-10">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-0.5">Growth ROI</p>
                 <motion.h2 
-                  key={metrics.growthRoi} // Trigger slight animation on change
+                  key={metrics.growthRoi}
                   initial={{ opacity: 0.8 }}
-                  animate={{ opacity: 1 }}
+                  animate={{ opacity: [0.8, 1] }}
                   className="text-2xl font-black text-white"
                 >
                   {metrics.growthRoi}%
@@ -214,16 +209,28 @@ export default function DemandGenMarketing() {
               <BarChart3 className="text-primary w-5 h-5" />
             </div>
             
-            {/* Sparkline Visualization */}
-            <div className="h-10 flex items-end gap-1 mt-2">
-              <SparklineBar height="40%" delay={0.1} />
-              <SparklineBar height="60%" delay={0.15} />
-              <SparklineBar height="35%" delay={0.2} />
-              <SparklineBar height="80%" delay={0.25} />
-              <SparklineBar height="100%" colorClass="bg-primary" delay={0.3} />
-              <SparklineBar height="70%" delay={0.35} />
-              <SparklineBar height="90%" colorClass="bg-accent" delay={0.4} />
-              <SparklineBar height="100%" colorClass="bg-primary" delay={0.45} />
+            <div className="relative mt-2 group/spark">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 -translate-y-2 opacity-0 group-hover/spark:opacity-100 group-hover/spark:translate-y-0 transition-all duration-300 z-20 pointer-events-none">
+                <div className="bg-charcoal/90 border border-primary/20 backdrop-blur-md px-2 py-1 rounded-md shadow-2xl flex items-center gap-1">
+                  <Search className="w-2 h-2 text-primary" />
+                  <span className="text-[8px] font-bold text-primary whitespace-nowrap">Peak: 14.2%</span>
+                </div>
+              </div>
+
+              <motion.div 
+                className="h-10 flex items-end gap-1 origin-bottom cursor-crosshair"
+                whileHover={{ scaleY: [1, 1.3], scaleX: [1, 1.05] }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                <div><SparklineBar height="40%" delay={0.1} /></div>
+                <div><SparklineBar height="60%" delay={0.15} /></div>
+                <div><SparklineBar height="35%" delay={0.2} /></div>
+                <div><SparklineBar height="80%" delay={0.25} /></div>
+                <div><SparklineBar height="100%" colorClass="bg-primary" delay={0.3} /></div>
+                <div><SparklineBar height="70%" delay={0.35} /></div>
+                <div><SparklineBar height="90%" colorClass="bg-accent" delay={0.4} /></div>
+                <div><SparklineBar height="100%" colorClass="bg-primary" delay={0.45} /></div>
+              </motion.div>
             </div>
             
             <p className="text-[9px] font-bold text-primary mt-1 flex items-center gap-1">
@@ -231,7 +238,7 @@ export default function DemandGenMarketing() {
             </p>
           </div>
 
-          {/* Card 2: Total Leads */}
+          {/* Lead Velocity Card */}
           <div className="glass-card rounded-xl p-3 flex flex-col justify-between group hover:border-white/20 transition-colors duration-300">
             <div className="flex justify-between items-start">
               <div>
@@ -239,7 +246,7 @@ export default function DemandGenMarketing() {
                 <motion.h2 
                    key={metrics.totalLeads}
                    initial={{ opacity: 0.8 }}
-                   animate={{ opacity: 1 }}
+                   animate={{ opacity: [0.8, 1] }}
                    className="text-2xl font-black text-white"
                 >
                   {metrics.totalLeads.toLocaleString()}
@@ -256,8 +263,8 @@ export default function DemandGenMarketing() {
               <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: "84%" }}
-                  transition={{ duration: 1, ease: "easeOut" }}
+                  animate={{ width: ["0%", "84%"] }}
+                  transition={{ duration: 1 }}
                   className="h-full data-gradient rounded-full"
                 />
               </div>
@@ -266,7 +273,7 @@ export default function DemandGenMarketing() {
             <p className="text-[9px] font-bold text-accent mt-1">Velocity: High Impact</p>
           </div>
 
-          {/* Card 3: Conversion Lift */}
+          {/* Statistical Lift Card */}
           <div className="glass-card rounded-xl p-3 flex flex-col justify-between group hover:border-white/20 transition-colors duration-300">
             <div className="flex justify-between items-start">
               <div>
@@ -274,7 +281,7 @@ export default function DemandGenMarketing() {
                 <motion.h2 
                    key={metrics.conversionLift}
                    initial={{ opacity: 0.8 }}
-                   animate={{ opacity: 1 }}
+                   animate={{ opacity: [0.8, 1] }}
                    className="text-2xl font-black text-white"
                 >
                   +{metrics.conversionLift}%
@@ -299,7 +306,7 @@ export default function DemandGenMarketing() {
             </div>
           </div>
 
-          {/* Card 4: CPL Reduction */}
+          {/* Efficiency Optimization Card */}
           <div className="glass-card rounded-xl p-3 flex flex-col justify-between group hover:border-white/20 transition-colors duration-300">
             <div className="flex justify-between items-start">
               <div>
@@ -307,7 +314,7 @@ export default function DemandGenMarketing() {
                 <motion.h2 
                    key={metrics.cplReduction}
                    initial={{ opacity: 0.8 }}
-                   animate={{ opacity: 1 }}
+                   animate={{ opacity: [0.8, 1] }}
                    className="text-2xl font-black text-white"
                 >
                   -{metrics.cplReduction}%
@@ -327,9 +334,8 @@ export default function DemandGenMarketing() {
             <p className="text-[9px] font-bold text-gray-400">Lowering acquisition overhead</p>
           </div>
 
-          {/* Card 5: Winning Strategy (Spans 2 columns) */}
+          {/* Strategy Insight Card */}
           <div className="col-span-2 glass-card rounded-xl p-3 flex flex-col gap-2 border-l-2 border-l-primary relative overflow-hidden group">
-             {/* Background Decoration */}
             <div className="absolute -right-4 -top-4 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity duration-500">
               <Trophy className="w-24 h-24" />
             </div>
@@ -362,20 +368,15 @@ export default function DemandGenMarketing() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="p-3 bg-white/5 border-t border-white/10 flex items-center justify-between">
+        {/* Console / Footer Feedback */}
+        <footer className="p-3 bg-white/5 border-t border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <div className="flex -space-x-1.5">
               <div className="w-5 h-5 rounded-full border border-charcoal bg-gray-600"></div>
-              <div className="w-5 h-5 rounded-full border border-charcoal bg-primary/20 flex items-center justify-center text-primary">
-                <span className="text-[6px] font-black">JD</span>
-              </div>
-              <div className="w-5 h-5 rounded-full border border-charcoal bg-accent/20 flex items-center justify-center text-accent">
-                <span className="text-[6px] font-black">+4</span>
-              </div>
+              <div className="w-5 h-5 rounded-full border border-charcoal bg-primary/20 flex items-center justify-center text-primary text-[6px] font-black">JD</div>
+              <div className="w-5 h-5 rounded-full border border-charcoal bg-accent/20 flex items-center justify-center text-accent text-[6px] font-black">+4</div>
             </div>
             
-            {/* Status Text Area */}
             <div className="flex items-center gap-1.5">
               {socketStatus === 'connected' ? (
                  <Wifi className="w-3 h-3 text-primary animate-pulse" />
@@ -389,7 +390,7 @@ export default function DemandGenMarketing() {
           </div>
           
           <div className="flex gap-2">
-            <button className="text-[10px] font-black px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5 uppercase flex items-center gap-1 group">
+            <button className="text-[10px] font-black px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5 uppercase">
               Export
             </button>
             <button className="text-[10px] font-black px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary to-accent text-black hover:brightness-110 transition-all uppercase flex items-center gap-1">
@@ -398,7 +399,6 @@ export default function DemandGenMarketing() {
             </button>
           </div>
         </footer>
-
       </motion.div>
     </div>
   );

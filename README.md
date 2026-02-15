@@ -1,48 +1,55 @@
-# Apex Real-Time Dashboard
+# Apex Real-Time Dashboard (Experiment Engine v2.0)
 
-## Description
-The Apex Real-Time Dashboard is a high-fidelity, data-driven UI component designed to visualize critical demand generation metrics. It features a sophisticated glassmorphism aesthetic ("glass-morphism") with organic, self-updating data simulations that mimic live WebSocket connections. The dashboard displays key performance indicators such as Growth ROI, Total Leads, and CPL Reduction using animated sparklines, radial gauges, and progress bars. It is engineered as a single-file React component, making it instantly portable for Next.js or Vite landing pages.
+## 🧠 Context & Creative Strategy
+The Apex Dashboard bridges the gap between high-velocity performance data and executive-level clarity. Designed for real-time visualization, it uses mock organic jitter and socket state simulations to demonstrate how a live marketing environment behaves under active optimization.
 
-## Tech Stack
-*   **Core:** React 19
-*   **Styling:** Tailwind CSS (Configured with custom color extension)
-*   **Animation:** Framer Motion (Complex layout transitions and SVG animations)
-*   **Icons:** Lucide React
+## 🎯 Purpose & Value Proposition
+Provides growth teams with a high-fidelity "at-a-glance" command center. By visualizing momentum rather than just static numbers, it drives faster decision-making for multi-channel demand generation campaigns.
 
-## Usage
-### Standalone
-Simply open `index.html` in a browser to view the component in its isolated environment.
+## 🚀 Ideal Use Cases
+- **Marketing Command Centers:** Monitoring active A/B tests in real-time.
+- **Executive Reporting:** High-impact visual summaries for weekly stakeholder syncs.
+- **Analytic Demos:** Demonstrating advanced platform capabilities with live-simulated data.
 
-### Integration (Next.js / Vite)
-1.  Copy `DemandGen-Marketing.tsx` into your project's components directory.
-2.  Install the required dependencies:
-    ```bash
-    npm install framer-motion lucide-react clsx tailwind-merge
-    ```
-3.  Import the component into your page or layout:
-    ```tsx
-    import DemandGenMarketing from './components/DemandGen-Marketing';
+## 👤 Target Audience
+- **Growth Engineers:** Monitoring experiment stability and velocity.
+- **Marketing VPs:** Requiring high-level summaries of ROI and CPL efficiency.
+- **Product Managers:** Visualizing feature-flag impact on conversion lift.
 
-    export default function Page() {
-      return (
-        <main className="flex min-h-screen items-center justify-center bg-[#0f171a]">
-          <DemandGenMarketing />
-        </main>
-      )
-    }
-    ```
-4.  Ensure your Tailwind configuration matches the custom colors below if not using the provided inline script.
+## 🎨 Design Philosophy
+- **Glassmorphism:** Subtle blurs and semi-transparent layers for a premium, modern feel.
+- **Industrial Contrast:** A dark charcoal base paired with neon cyan and purple accents.
+- **Tactile Motion:** Spring physics and array-based keyframes ensure animations feel organic and responsive.
 
-## Color Palette
-The application uses a specific dark-mode palette optimized for high contrast and data readability:
+## 🛠️ Tech Stack
+- **Framework:** React 18 / 19 (Strict mode enabled)
+- **Animation:** Framer Motion (v12+ syntax)
+- **Styling:** Tailwind CSS (extended custom theme)
+- **Icons:** Lucide React
 
-| Color Token | Hex Value | Usage |
+## ⚙️ Usage
+- **React Component:** Import `DemandGenMarketing` from `DemandGen-Marketing.tsx`.
+- **Stand-alone Build:** Open `DemandGen-Marketing.html` in any modern browser.
+- **Gallery Integration:** Root container is strictly 1:1 aspect ratio for grid compatibility.
+
+## 🌈 Color Palette
+| Token | Hex Code | Role |
 | :--- | :--- | :--- |
-| **Charcoal** | `#0f171a` | Main background and card base |
-| **Primary** | `#20bfdf` | Primary data points, sparklines, branding |
-| **Accent** | `#9333ea` | Secondary metrics, gradients |
-| **Surface** | `rgba(26, 38, 41, 0.75)` | Glassmorphism card background |
-| **Success** | `#0bda54` | Status indicators (Live Scaling) |
+| **Charcoal** | `#0f171a` | Base Background |
+| **Primary** | `#20bfdf` | Growth Metrics & Strategy |
+| **Accent** | `#9333ea` | Efficiency & Secondary Stats |
+| **Success** | `#0bda54` | Live Socket Status |
 
-## App Name
-**Apex Real-Time Dashboard** (Experiment Engine v2.0)
+## ✨ Key Features
+- **Socket Simulation:** Mimics active connection states (Connected, Reconnecting, Connecting).
+- **Interactive Sparklines:** Hover-to-zoom bars with real-time peak detail tooltips.
+- **Radial Efficiency Ring:** SVG-based gauge ring for acquisition health.
+- **Winning Strategy HUD:** Summarizes qualitative insights alongside numeric data.
+- **Organic Jitter:** Randomized update cycles that mimic real-world network fluctuations.
+
+## 📂 Project Structure
+- `index.html`: Entry point configuration with Tailwind CSS and ES Module import maps.
+- `index.tsx`: React application root where the main dashboard component is rendered.
+- `DemandGen-Marketing.tsx`: The core business logic and UI for the real-time simulation dashboard.
+- `metadata.json`: Contains application descriptive metadata and security/frame permissions.
+- `README.md`: Full documentation of the project's strategy, technical stack, and architecture.
